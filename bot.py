@@ -23,8 +23,6 @@ async def on_message(message):
 
     print(f"{message.author}: {message.content}")
 
-    await bot.process_commands(message)
-
 
 keep_alive()
 bot.run(TOKEN)
