@@ -25,7 +25,7 @@ async def on_message(message):
         return
 
     # ตรวจหาลิงก์
-    if re.search(r"https?://\S+|www\.\S+", message.content, re.IGNORECASE):
+    if re.search(r"(discord\.gg/|discord\.com/invite/)\S+", message.content, re.IGNORECASE):
         try:
             await message.delete()
             print(f"ลบลิงก์จาก {message.author}: {message.content}", flush=True)
