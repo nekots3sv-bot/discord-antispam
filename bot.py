@@ -153,7 +153,7 @@ async def on_message(message):
                 )
 
                 warning = await message.channel.send(
-                    f"🔇 {message.author.mention} ถูก Timeout 10 นาที "
+                    f"🔇 {message.author.mention} ถูก Timeout 1 นาที "
                     f"เนื่องจากส่ง Discord Invite ซ้ำหลายครั้ง"
                 )
 
