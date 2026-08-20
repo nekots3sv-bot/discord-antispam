@@ -40,7 +40,6 @@ async def on_message(message):
         except Exception as e:
             print(f"เกิดข้อผิดพลาด: {e}", flush=True)
 
-    await bot.process_commands(message)
 
 
 keep_alive()
