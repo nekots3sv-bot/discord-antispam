@@ -1,9 +1,26 @@
 import os
 import re
 import time
+import threading
 import discord
-from keep_alive import keep_alive
 from datetime import timedelta
+from flask import Flask
+
+# =========================
+# Flask Web Server
+# =========================
+
+app = Flask(__name__)
+
+
+@app.route("/")
+def home():
+    return "Discord Bot is running!"
+
+
+def run_web():
+    port = int(os.getenv("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
 
 # เก็บประวัติการส่ง Invite ของแต่ละคน
 invite_warnings = {}
@@ -185,5 +202,19 @@ async def on_message(message):
 
 
 
-keep_alive()
-bot.run(TOKEN)
+# =========================
+# Start
+# =========================
+
+if __name__ == "__main__":
+
+    # เปิด Web Server ใน Thread
+    web_thread = threading.Thread(
+        target=run_web,
+        daemon=True
+    )
+
+    web_thread.start()
+
+    # เปิด Discord Bot
+    bot.run(TOKEN)
