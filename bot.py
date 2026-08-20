@@ -17,7 +17,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-
+    print("ON_MESSAGE ทำงานแล้ว", flush=True)
     if message.author.bot:
         return
 
