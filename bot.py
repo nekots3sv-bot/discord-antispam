@@ -12,7 +12,11 @@ invite_warnings = {}
 TIMEOUT_AFTER = 3       # ส่งครบ 3 ครั้ง -> Timeout
 BAN_AFTER = 6           # ส่งครบ 6 ครั้ง -> Ban
 TIME_WINDOW = 300       # นับเฉพาะภายใน 5 นาที
-TIMEOUT_SECONDS = 600   # Timeout 10 นาที
+TIMEOUT_SECONDS = 60   # Timeout 1 นาที
+
+# Staff
+staff_link_warnings = {}
+STAFF_WARNING_COOLDOWN = 300  # 5 นาที
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 
@@ -34,6 +38,40 @@ async def on_message(message):
     # ไม่ตรวจ Bot
     if message.author.bot:
         return
+
+    # Owner / Admin / Moderator สามารถส่งลิงก์ได้
+    is_owner = message.author == message.guild.owner
+    
+    is_staff = (
+        message.author.guild_permissions.administrator
+        or message.author.guild_permissions.manage_messages
+        or message.author.guild_permissions.moderate_members
+    )
+
+    if is_owner or is_staff:
+
+    # มีลิงก์หรือไม่
+    if re.search(r"https?://\S+|www\.\S+", message.content, re.IGNORECASE):
+
+        user_id = message.author.id
+        now = time.time()
+
+        # เช็กว่าเคยเตือนไปใน 5 นาทีล่าสุดหรือยัง
+        last_warning = staff_link_warnings.get(user_id, 0)
+
+        if now - last_warning >= STAFF_WARNING_COOLDOWN:
+
+            warning = await message.channel.send(
+                f"⚠️ {message.author.mention} "
+                f"กรุณาตรวจสอบว่าลิงก์ที่ส่งเป็นลิงก์ที่ปลอดภัยก่อนแชร์"
+            )
+
+            await warning.delete(delay=8)
+
+            # บันทึกเวลาที่เตือนล่าสุด
+            staff_link_warnings[user_id] = now
+
+    return
 
     # ตรวจ Discord Invite
     invite_pattern = r"(discord\.gg/|discord\.com/invite/)\S+"
