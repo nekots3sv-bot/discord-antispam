@@ -5,6 +5,7 @@ import threading
 import discord
 from datetime import timedelta
 from flask import Flask
+from waitress import serve
 
 # =========================
 # Flask Web Server
@@ -20,7 +21,7 @@ def home():
 
 def run_web():
     port = int(os.getenv("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    serve(app, host="0.0.0.0", port=port)
 
 # เก็บประวัติการส่ง Invite ของแต่ละคน
 invite_warnings = {}
