@@ -50,28 +50,38 @@ async def on_message(message):
 
     if is_owner or is_staff:
 
-    # มีลิงก์หรือไม่
-    if re.search(r"https?://\S+|www\.\S+", message.content, re.IGNORECASE):
+        # ถ้า Staff ส่งลิงก์
+        if re.search(
+            r"https?://\S+|www\.\S+",
+            message.content,
+            re.IGNORECASE
+        ):
 
-        user_id = message.author.id
-        now = time.time()
+            user_id = message.author.id
+            now = time.time()
 
-        # เช็กว่าเคยเตือนไปใน 5 นาทีล่าสุดหรือยัง
-        last_warning = staff_link_warnings.get(user_id, 0)
+            # เวลาที่เตือน Staff คนนี้ล่าสุด
+            last_warning = staff_link_warnings.get(user_id, 0)
 
-        if now - last_warning >= STAFF_WARNING_COOLDOWN:
+            # เตือนแค่ครั้งแรกทุก 5 นาที
+            if now - last_warning >= STAFF_WARNING_COOLDOWN:
 
-            warning = await message.channel.send(
-                f"⚠️ {message.author.mention} "
-                f"กรุณาตรวจสอบว่าลิงก์ที่ส่งเป็นลิงก์ที่ปลอดภัยก่อนแชร์"
-            )
+                warning = await message.channel.send(
+                    f"⚠️ {message.author.mention} "
+                    f"กรุณาตรวจสอบว่าลิงก์ที่ส่งเป็นลิงก์ที่ปลอดภัยก่อนแชร์"
+                )
 
-            await warning.delete(delay=8)
+                await warning.delete(delay=8)
 
-            # บันทึกเวลาที่เตือนล่าสุด
-            staff_link_warnings[user_id] = now
+                staff_link_warnings[user_id] = now
 
-    return
+                print(
+                    f"⚠️ Staff link warning: {message.author}",
+                    flush=True
+                )
+
+        # Staff ไม่เข้าสู่ระบบ Anti-Spam
+        return
 
     # ตรวจ Discord Invite
     invite_pattern = r"(discord\.gg/|discord\.com/invite/)\S+"
